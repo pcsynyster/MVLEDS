@@ -47,7 +47,7 @@ const PRODUCTS = [
       { label: "Garantia", value: "6 meses" },
     ],
     variants: [
-      { id: "outros", label: "Demais encaixes", price: 130 },
+      { id: "outros", label: "H1, H7, H11, HB3/4", price: 130 },
       { id: "h4", label: "Encaixe H4", price: 160 },
     ],
   },
@@ -64,7 +64,7 @@ const PRODUCTS = [
       { label: "Garantia", value: "1 ano" },
     ],
     variants: [
-      { id: "outros", label: "Demais encaixes", price: 200 },
+      { id: "outros", label: "H1, H7, H11, HB3/4", price: 200 },
       { id: "h4", label: "Encaixe H4", price: 230 },
     ],
   },
@@ -81,7 +81,7 @@ const PRODUCTS = [
       { label: "Garantia", value: "1 ano" },
     ],
     variants: [
-      { id: "outros", label: "Demais encaixes", price: 270 },
+      { id: "outros", label: "H1, H7, H11, HB3/4", price: 270 },
       { id: "h4", label: "Encaixe H4", price: 300 },
     ],
   },
@@ -98,7 +98,7 @@ const PRODUCTS = [
       { label: "Garantia", value: "1 ano" },
     ],
     variants: [
-      { id: "outros", label: "Demais encaixes", price: 350 },
+      { id: "outros", label: "H1, H7, H11, HB3/4", price: 350 },
       { id: "h4", label: "Encaixe H4", price: 380 },
     ],
   },
