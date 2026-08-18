@@ -38,14 +38,6 @@ mvleds/
     └── images/         # Imagens da logo e dos produtos
 ```
 
-## Como editar
-
-- **Número de WhatsApp / nome da loja** → `js/config.js`
-- **Produtos, preços e categorias** → `js/products.js` (basta copiar
-  um bloco existente e ajustar os campos)
-
-## Como rodar localmente
-
 Não precisa de servidor nem instalação — é só abrir o `index.html`
 no navegador, ou usar a extensão **Live Server** do VS Code para
 recarregar automaticamente durante a edição.
