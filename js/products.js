@@ -236,4 +236,20 @@ const PRODUCTS = [
     specs: [{ label: "Inclui", value: "Vitrificação" }],
     price: 200,
   },
-];
+  {
+    id: "led-projetor",
+    name: "LED Projetor",
+    category: "farol-principal",
+    image: "assets/images/led-projetor.jpeg",
+    shortDesc: "R$ 150 unidade / R$ 280 o par",
+    description: "Kit LED Projetor de alta performance. R$ 150 a unidade ou R$ 280 o par.",
+    specs: [
+      { label: "Unidade", value: "R$ 150,00" },
+      { label: "Par", value: "R$ 280,00" },
+      { label: "Tonalidade", value: "6000K" },
+      { label: "Voltagem", value: "12V" }
+    ],
+    price: 150,
+    priceUnit: "unidade"
+  }
+]

@@ -708,6 +708,99 @@ section {
 }
 
 /* ------------------------------------------------------------
+   Resultados / Stories (Instagram)
+   ------------------------------------------------------------ */
+
+.section-stories {
+  border-top: 1px solid var(--panel-line);
+  background: var(--void);
+}
+
+.stories-carousel-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  padding: 8px 0 24px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: var(--panel-line) transparent;
+}
+
+.stories-carousel-wrapper::-webkit-scrollbar {
+  height: 6px;
+}
+
+.stories-carousel-wrapper::-webkit-scrollbar-thumb {
+  background: var(--panel-line);
+  border-radius: var(--radius-sm);
+}
+
+.stories-track {
+  display: flex;
+  gap: 16px;
+  width: max-content;
+  padding: 0 4px;
+}
+
+.story-card {
+  position: relative;
+  width: 200px;
+  height: 340px;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  display: block;
+  border: 1px solid var(--panel-line);
+  background: var(--panel);
+  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+  flex-shrink: 0;
+  text-decoration: none;
+}
+
+.story-card:hover {
+  transform: translateY(-6px);
+  border-color: var(--red-bright);
+  box-shadow: 0 10px 24px rgba(227, 30, 36, 0.25);
+}
+
+.story-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s ease;
+}
+
+.story-card:hover img {
+  transform: scale(1.04);
+}
+
+.story-tag {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  background: rgba(8, 9, 10, 0.8);
+  backdrop-filter: blur(6px);
+  color: var(--ice);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.stories-footer {
+  display: flex;
+  justify-content: center;
+  margin-top: 36px;
+}
+
+.btn-insta-follow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* ------------------------------------------------------------
    Sobre
    ------------------------------------------------------------ */
 
@@ -1494,6 +1587,11 @@ section {
 
   .product-name {
     font-size: 1.15rem;
+  }
+
+  .story-card {
+    width: 160px;
+    height: 270px;
   }
 
   .drawer {
