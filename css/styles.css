@@ -173,7 +173,11 @@ p {
 .btn-whatsapp:hover {
   background: #24c96a;
 }
-
+.btn-whatsapp svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
 .btn-block {
   width: 100%;
 }
