@@ -1,25 +1,32 @@
-/* ============================================================
-   MV LEDs — Aplicação principal
-   ------------------------------------------------------------
-   Responsável por:
-   - Renderizar produtos e filtros a partir de PRODUCTS/CATEGORIES
-   - Controlar o carrinho (localStorage não é usado propositalmente
-     em ambientes de artifact, aqui usamos apenas memória da sessão)
-   - Abrir/fechar modal de detalhes do produto
-   - Abrir/fechar o drawer do carrinho
-   - Montar a mensagem e o link de WhatsApp a partir do carrinho
-   ============================================================ */
+/* Aplicação principal MV LEDs */
 
 (function () {
   "use strict";
 
-  /* ----------------------------------------------------------
-     Estado
-     ---------------------------------------------------------- */
+  /* Estado */
   const state = {
     activeCategory: "todos",
-    cart: [], // { lineId, productId, variantId, qty }
+    cart: [], // { lineId, productId, variantId, qty, isCustom, customName }
   };
+
+  /* Itens rápidos de combo (Upsell) */
+  const quickAddItems = [
+    {
+      id: "pingo-t10-silicone",
+      name: "Par Pingo T10 Silicone (Farolete)",
+      price: "Consultar via WhatsApp",
+    },
+    {
+      id: "led-placa-t10",
+      name: "Par LED Luz de Placa",
+      price: "Consultar via WhatsApp",
+    },
+    {
+      id: "kit-interno-teto",
+      name: "Kit LED Cortesia / Teto",
+      price: "Consultar via WhatsApp",
+    },
+  ];
 
   const els = {
     header: document.getElementById("siteHeader"),
@@ -34,6 +41,8 @@
     cartCloseBtn: document.getElementById("cartCloseBtn"),
     cartBody: document.getElementById("cartBody"),
     cartFooter: document.getElementById("cartFooter"),
+    cartUpsell: document.getElementById("cartUpsell"),
+    upsellList: document.getElementById("upsellList"),
     modal: document.getElementById("productModal"),
     modalPanel: document.getElementById("modalPanel"),
     modalCloseBtn: document.getElementById("modalCloseBtn"),
@@ -49,10 +58,7 @@
 
   let toastTimer = null;
 
-  /* ----------------------------------------------------------
-     Helpers
-     ---------------------------------------------------------- */
-
+  /* Helpers */
   function formatBRL(value) {
     return value.toLocaleString("pt-BR", {
       style: "currency",
@@ -65,13 +71,14 @@
   }
 
   function getVariant(product, variantId) {
-    if (!product.variants) return null;
+    if (!product || !product.variants) return null;
     return (
       product.variants.find((v) => v.id === variantId) || product.variants[0]
     );
   }
 
   function unitPrice(product, variantId) {
+    if (!product) return 0;
     if (product.variants) {
       const v = getVariant(product, variantId);
       return v ? v.price : 0;
@@ -81,11 +88,11 @@
   }
 
   function isPriceKnown(product) {
-    return !product.priceOnRequest && product.price != null || !!product.variants;
+    if (!product) return false;
+    return (!product.priceOnRequest && product.price != null) || !!product.variants;
   }
 
   function formatPhoneDisplay(number) {
-    // 5584986207942 -> +55 (84) 98620-7942
     const digits = number.replace(/\D/g, "");
     const ddi = digits.slice(0, 2);
     const ddd = digits.slice(2, 4);
@@ -114,10 +121,7 @@
     }, 2200);
   }
 
-  /* ----------------------------------------------------------
-     Render: filtros
-     ---------------------------------------------------------- */
-
+  /* Filtros */
   function renderFilters() {
     els.filters.innerHTML = "";
     CATEGORIES.forEach((cat) => {
@@ -125,10 +129,7 @@
       btn.className = "filter-chip";
       btn.type = "button";
       btn.textContent = cat.label;
-      btn.setAttribute(
-        "aria-pressed",
-        String(cat.key === state.activeCategory)
-      );
+      btn.setAttribute("aria-pressed", String(cat.key === state.activeCategory));
       btn.addEventListener("click", () => {
         state.activeCategory = cat.key;
         renderFilters();
@@ -138,10 +139,7 @@
     });
   }
 
-  /* ----------------------------------------------------------
-     Render: grid de produtos
-     ---------------------------------------------------------- */
-
+  /* Grid de produtos */
   function productPriceMarkup(product) {
     if (product.variants) {
       const cheapest = Math.min(...product.variants.map((v) => v.price));
@@ -159,9 +157,7 @@
         </div>`;
     }
     const label = product.priceLabel || "Preço";
-    const unit = product.priceUnit
-      ? `<span>/ ${product.priceUnit}</span>`
-      : "";
+    const unit = product.priceUnit ? `<span>/ ${product.priceUnit}</span>` : "";
     return `
       <div class="price">
         <span class="price-label">${label}</span>
@@ -216,12 +212,10 @@
       els.grid.appendChild(card);
     });
 
-    // abrir detalhe
     els.grid.querySelectorAll(".card-open").forEach((btn) => {
       btn.addEventListener("click", () => openModal(btn.dataset.id));
     });
 
-    // adicionar rápido (usa variante padrão / sem variante)
     els.grid.querySelectorAll("[data-quick-add]").forEach((btn) => {
       btn.addEventListener("click", (e) => {
         e.stopPropagation();
@@ -235,10 +229,7 @@
     });
   }
 
-  /* ----------------------------------------------------------
-     Modal de produto
-     ---------------------------------------------------------- */
-
+  /* Modal de produto */
   let modalState = { productId: null, variantId: null, qty: 1 };
 
   function openModal(productId) {
@@ -350,7 +341,6 @@
       </div>
     `;
 
-    // listeners
     if (product.variants) {
       els.modalInfo.querySelectorAll("[data-variant]").forEach((btn) => {
         btn.addEventListener("click", () => {
@@ -375,10 +365,7 @@
     });
   }
 
-  /* ----------------------------------------------------------
-     Carrinho — lógica de dados
-     ---------------------------------------------------------- */
-
+  /* Carrinho — dados */
   function lineId(productId, variantId) {
     return variantId ? `${productId}::${variantId}` : productId;
   }
@@ -393,6 +380,30 @@
     }
     renderCart();
     updateCartCount();
+  }
+
+  /* Adiciona itens rápidos do upsell */
+  function addQuickUpsellItem(itemId) {
+    const item = quickAddItems.find((i) => i.id === itemId);
+    if (!item) return;
+
+    const existing = state.cart.find((l) => l.lineId === item.id);
+    if (existing) {
+      existing.qty += 1;
+    } else {
+      state.cart.push({
+        lineId: item.id,
+        productId: item.id,
+        variantId: null,
+        qty: 1,
+        isCustom: true,
+        customName: item.name,
+      });
+    }
+
+    renderCart();
+    updateCartCount();
+    showToast(`${item.name} adicionado ao carrinho`);
   }
 
   function setLineQty(id, qty) {
@@ -425,8 +436,14 @@
     let hasOnRequest = false;
 
     state.cart.forEach((line) => {
-      const product = findProduct(line.productId);
       itemCount += line.qty;
+
+      if (line.isCustom) {
+        hasOnRequest = true;
+        return;
+      }
+
+      const product = findProduct(line.productId);
       if (!isPriceKnown(product)) {
         hasOnRequest = true;
         return;
@@ -443,10 +460,45 @@
     els.cartCount.dataset.empty = String(itemCount === 0);
   }
 
-  /* ----------------------------------------------------------
-     Carrinho — render do drawer
-     ---------------------------------------------------------- */
+  /* Render de combos (Upsell) */
+  function renderCartUpsell() {
+    if (!els.upsellList || !els.cartUpsell) return;
 
+    if (state.cart.length === 0) {
+      els.cartUpsell.style.display = "none";
+      return;
+    }
+    els.cartUpsell.style.display = "block";
+
+    els.upsellList.innerHTML = quickAddItems
+      .map((item) => {
+        const priceDisplay =
+          typeof item.price === "number"
+            ? `+ R$ ${item.price.toFixed(2).replace(".", ",")}`
+            : item.price;
+
+        return `
+        <div class="upsell-card">
+          <div class="upsell-info">
+            <span class="upsell-name">${item.name}</span>
+            <span class="upsell-price">${priceDisplay}</span>
+          </div>
+          <button type="button" class="btn-upsell-add" data-upsell-id="${item.id}">
+            + Adicionar
+          </button>
+        </div>
+      `;
+      })
+      .join("");
+
+    els.upsellList.querySelectorAll("[data-upsell-id]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        addQuickUpsellItem(btn.dataset.upsellId);
+      });
+    });
+  }
+
+  /* Render do drawer do carrinho */
   function renderCart() {
     if (state.cart.length === 0) {
       els.cartBody.innerHTML = `
@@ -455,15 +507,38 @@
           <p>Seu carrinho está vazio.</p>
         </div>`;
       els.cartFooter.innerHTML = "";
+      renderCartUpsell();
       return;
     }
 
     els.cartBody.innerHTML = state.cart
       .map((line) => {
+        if (line.isCustom) {
+          return `
+          <div class="cart-item" data-line="${line.lineId}">
+            <div class="cart-item-media" style="display:flex;align-items:center;justify-content:center;background:#131316;border:1px solid var(--panel-line);border-radius:var(--radius-sm);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="24" height="24" style="color:var(--red-bright);"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+            </div>
+            <div class="cart-item-info">
+              <span class="cart-item-name">${line.customName}</span>
+              <span class="cart-item-variant">Combo adicional</span>
+              <span class="cart-item-price">Sob consulta</span>
+              <div class="qty-stepper">
+                <button type="button" data-qty-step="-1">−</button>
+                <span>${line.qty}</span>
+                <button type="button" data-qty-step="1">+</button>
+              </div>
+            </div>
+            <div class="cart-item-remove">
+              <button type="button" data-remove aria-label="Remover item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+              </button>
+            </div>
+          </div>`;
+        }
+
         const product = findProduct(line.productId);
-        const variant = product.variants
-          ? getVariant(product, line.variantId)
-          : null;
+        const variant = product.variants ? getVariant(product, line.variantId) : null;
         const priceKnown = isPriceKnown(product);
         const unit = priceKnown ? unitPrice(product, line.variantId) : 0;
 
@@ -489,9 +564,7 @@
             </div>
           </div>
           <div class="cart-item-remove">
-            <button type="button" data-remove aria-label="Remover ${
-              product.name
-            }">
+            <button type="button" data-remove aria-label="Remover ${product.name}">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
             </button>
           </div>
@@ -499,7 +572,6 @@
       })
       .join("");
 
-    // listeners de quantidade / remoção
     els.cartBody.querySelectorAll(".cart-item").forEach((el) => {
       const id = el.dataset.line;
       const line = state.cart.find((l) => l.lineId === id);
@@ -550,21 +622,23 @@
     document.getElementById("clearCartBtn").addEventListener("click", () => {
       clearCart();
     });
+
+    renderCartUpsell();
   }
 
-  /* ----------------------------------------------------------
-     Mensagem de WhatsApp
-     ---------------------------------------------------------- */
-
+  /* Mensagem de WhatsApp */
   function buildWhatsAppMessage() {
     const { subtotal, hasOnRequest } = cartTotals();
     const lines = [`Olá, ${CONFIG.OWNER_NAME}! Gostaria de fazer um pedido na ${CONFIG.STORE_NAME}:`, ""];
 
     state.cart.forEach((line) => {
+      if (line.isCustom) {
+        lines.push(`• ${line.qty}x ${line.customName} — valor sob consulta`);
+        return;
+      }
+
       const product = findProduct(line.productId);
-      const variant = product.variants
-        ? getVariant(product, line.variantId)
-        : null;
+      const variant = product.variants ? getVariant(product, line.variantId) : null;
       const priceKnown = isPriceKnown(product);
       const unit = priceKnown ? unitPrice(product, line.variantId) : null;
 
@@ -588,14 +662,12 @@
     return lines.join("\n");
   }
 
-  /* ----------------------------------------------------------
-     Drawer aberto/fechado
-     ---------------------------------------------------------- */
-
+  /* Drawer */
   function openDrawer() {
     els.drawer.classList.add("is-open");
     els.overlay.classList.add("is-open");
     document.body.style.overflow = "hidden";
+    renderCartUpsell();
   }
 
   function closeDrawer() {
@@ -606,10 +678,7 @@
     }
   }
 
-  /* ----------------------------------------------------------
-     Eventos globais
-     ---------------------------------------------------------- */
-
+  /* Eventos globais */
   function initHeaderScroll() {
     const onScroll = () => {
       els.header.classList.toggle("is-scrolled", window.scrollY > 8);
@@ -657,15 +726,10 @@
     const link = waLink(CONFIG.WHATSAPP_DEFAULT_MESSAGE);
     els.floatWaBtn.href = link;
     els.contactWaBtn.href = link;
-    els.contactPhoneDisplay.textContent = formatPhoneDisplay(
-      CONFIG.WHATSAPP_NUMBER
-    );
+    els.contactPhoneDisplay.textContent = formatPhoneDisplay(CONFIG.WHATSAPP_NUMBER);
   }
 
-  /* ----------------------------------------------------------
-     Init
-     ---------------------------------------------------------- */
-
+  /* Inicialização */
   function init() {
     els.year.textContent = new Date().getFullYear();
     renderFilters();
@@ -681,47 +745,46 @@
 
   document.addEventListener("DOMContentLoaded", init);
 })();
-// ============================================
-// SIMULADOR KELVIN (TEMPERATURA DE COR)
-// ============================================
+
+/* Simulador Kelvin */
 const kelvinData = {
   3000: {
-    hud: '3000K · AMARELO ',
-    title: '3000K — Amarelo Ouro (Penetração Máxima)',
-    desc: 'Projetada para quebrar o reflexo de gotículas de água e partículas em suspensão. É a opção técnica definitiva para chuva pesada, neblina e asfalto molhado.',
-    app: 'Faróis de neblina/milha e veículos de viagem/estrada frequente.',
-    contrast: 'Penetração superior em mau tempo, sem rebater a luz contra os olhos.',
-    beam: 'radial-gradient(ellipse at bottom, rgba(255, 210, 80, 0.95) 0%, rgba(255, 170, 0, 0.5) 45%, transparent 75%)'
+    hud: "3000K · AMARELO",
+    title: "3000K — Amarelo Ouro (Penetração Máxima)",
+    desc: "Projetada para quebrar o reflexo de gotículas de água e partículas em suspensão. É a opção técnica definitiva para chuva pesada, neblina e asfalto molhado.",
+    app: "Faróis de neblina/milha e veículos de viagem/estrada frequente.",
+    contrast: "Penetração superior em mau tempo, sem rebater a luz contra os olhos.",
+    beam: "radial-gradient(ellipse at bottom, rgba(255, 210, 80, 0.95) 0%, rgba(255, 170, 0, 0.5) 45%, transparent 75%)",
   },
   4300: {
-    hud: '4300K · BRANCO QUENTE ',
-    title: '4300K — Branco Quente (Padrão Original de Fábrica)',
-    desc: 'A mesma tonalidade dos faróis de xênon e LED originais de montadora. Proporciona iluminação com excelente índice de reprodução de cor, discreta e sem chamar atenção em fiscalizações.',
-    app: 'Farol principal de quem busca máxima discrição com alta eficiência.',
-    contrast: 'Excelente leitura de relevo e buracos em asfalto escuro.',
-    beam: 'radial-gradient(ellipse at bottom, rgba(255, 248, 220, 0.95) 0%, rgba(255, 230, 170, 0.45) 45%, transparent 75%)'
+    hud: "4300K · BRANCO QUENTE",
+    title: "4300K — Branco Quente (Padrão Original de Fábrica)",
+    desc: "A mesma tonalidade dos faróis de xênon e LED originais de montadora. Proporciona iluminação com excelente índice de reprodução de cor, discreta e sem chamar atenção em fiscalizações.",
+    app: "Farol principal de quem busca máxima discrição com alta eficiência.",
+    contrast: "Excelente leitura de relevo e buracos em asfalto escuro.",
+    beam: "radial-gradient(ellipse at bottom, rgba(255, 248, 220, 0.95) 0%, rgba(255, 230, 170, 0.45) 45%, transparent 75%)",
   },
   6000: {
-    hud: '6000K · BRANCO PURO ',
-    title: '6000K — Branco Puro (O Mais Procurado)',
-    desc: 'É a escolha mais popular e moderna. Oferece visual esportivo de alta definição, realçando placas reflexivas e faixas de trânsito em vias pavimentadas sem esforço visual.',
-    app: 'Uso urbano, rodovias bem pavimentadas e estética esportiva moderna.',
-    contrast: 'Alto realce de placas de sinalização e olhos de gato.',
-    beam: 'radial-gradient(ellipse at bottom, rgba(235, 245, 255, 0.95) 0%, rgba(180, 215, 255, 0.5) 45%, transparent 75%)'
-  }
+    hud: "6000K · BRANCO PURO",
+    title: "6000K — Branco Puro (O Mais Procurado)",
+    desc: "É a escolha mais popular e moderna. Oferece visual esportivo de alta definição, realçando placas reflexivas e faixas de trânsito em vias pavimentadas sem esforço visual.",
+    app: "Uso urbano, rodovias bem pavimentadas e estética esportiva moderna.",
+    contrast: "Alto realce de placas de sinalização e olhos de gato.",
+    beam: "radial-gradient(ellipse at bottom, rgba(235, 245, 255, 0.95) 0%, rgba(180, 215, 255, 0.5) 45%, transparent 75%)",
+  },
 };
 
-const kButtons = document.querySelectorAll('.k-btn');
-const kelvinBeam = document.getElementById('kelvinBeam');
-const hudValue = document.getElementById('hudValue');
-const infoTitle = document.getElementById('infoTitle');
-const infoDesc = document.getElementById('infoDesc');
-const infoSpecs = document.getElementById('infoSpecs');
+const kButtons = document.querySelectorAll(".k-btn");
+const kelvinBeam = document.getElementById("kelvinBeam");
+const hudValue = document.getElementById("hudValue");
+const infoTitle = document.getElementById("infoTitle");
+const infoDesc = document.getElementById("infoDesc");
+const infoSpecs = document.getElementById("infoSpecs");
 
-kButtons.forEach(btn => {
-  btn.addEventListener('click', () => {
-    kButtons.forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
+kButtons.forEach((btn) => {
+  btn.addEventListener("click", () => {
+    kButtons.forEach((b) => b.classList.remove("active"));
+    btn.classList.add("active");
 
     const k = btn.dataset.kelvin;
     const data = kelvinData[k];
@@ -738,84 +801,3 @@ kButtons.forEach(btn => {
     `;
   });
 });
-/* Combos e upsell no carrinho */
-const quickAddItems = [
-  {
-    id: 'pingo-t10-silicone',
-    name: 'Par Pingo T10 Silicone (Farolete)',
-    price: 'Consultar via WhatsApp'
-  },
-  {
-    id: 'led-placa-t10',
-    name: 'Par LED Luz de Placa',
-    price: 'Consultar via WhatsApp'
-  },
-  {
-    id: 'kit-interno-teto',
-    name: 'Kit LED Cortesia / Teto',
-    price: 'Consultar via WhatsApp'
-  }
-];
-
-function renderCartUpsell() {
-  const upsellContainer = document.getElementById('upsellList');
-  const upsellWrapper = document.getElementById('cartUpsell');
-  if (!upsellContainer || !upsellWrapper) return;
-
-  if (typeof cart !== 'undefined' && cart.length === 0) {
-    upsellWrapper.style.display = 'none';
-    return;
-  }
-  upsellWrapper.style.display = 'block';
-
-  upsellContainer.innerHTML = quickAddItems.map(item => {
-    const priceDisplay = typeof item.price === 'number' 
-      ? `+ R$ ${item.price.toFixed(2).replace('.', ',')}` 
-      : item.price;
-
-    return `
-      <div class="upsell-card">
-        <div class="upsell-info">
-          <span class="upsell-name">${item.name}</span>
-          <span class="upsell-price">${priceDisplay}</span>
-        </div>
-        <button type="button" class="btn-upsell-add" onclick="addQuickItem('${item.id}')">
-          + Adicionar
-        </button>
-      </div>
-    `;
-  }).join('');
-}
-
-window.addQuickItem = function(itemId) {
-  const item = quickAddItems.find(i => i.id === itemId);
-  if (!item) return;
-
-  if (typeof cart !== 'undefined') {
-    const existing = cart.find(p => p.id === item.id);
-    if (existing) {
-      existing.quantity = (existing.quantity || 1) + 1;
-    } else {
-      cart.push({
-        id: item.id,
-        name: item.name,
-        price: item.price,
-        quantity: 1
-      });
-    }
-
-    // Executa as funções nativas do seu site para atualizar a tela e salvar
-    if (typeof updateCart === 'function') updateCart();
-    else if (typeof renderCart === 'function') renderCart();
-    if (typeof saveCart === 'function') saveCart();
-    if (typeof updateCartCount === 'function') updateCartCount();
-  }
-};
-
-// Dispara a verificação sempre que o botão de abrir o carrinho for clicado
-const cartBtnToggle = document.getElementById('cartToggle');
-if (cartBtnToggle) {
-  cartBtnToggle.addEventListener('click', () => {
-    setTimeout(renderCartUpsell, 50);
-  });
-}

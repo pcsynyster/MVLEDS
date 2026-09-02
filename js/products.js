@@ -239,7 +239,7 @@ const PRODUCTS = [
   {
     id: "led-projetor",
     name: "LED Projetor",
-    category: "farol-principal",
+    category: "led",
     image: "assets/images/led-projetor.jpeg",
     shortDesc: "R$ 150 unidade / R$ 280 o par",
     description: "Kit LED Projetor de alta performance. R$ 150 a unidade ou R$ 280 o par.",
@@ -251,5 +251,24 @@ const PRODUCTS = [
     ],
     price: 150,
     priceUnit: "unidade"
+  },
+  {
+    id: "pingo-led-projetor",
+    name: "Pingo de LED T10 com Projetor",
+    category: "led",
+    image: "assets/images/pingo-led-projetor.jpg",
+    shortDesc: "1600 Lúmens · 6000K Branco Frio · Canbus incluso.",
+    description:
+      "O pingo de LED mais forte do mercado! Modelo equipado com lente projetora frontal e 1600 lúmens de fluxo luminoso, proporcionando luz super branca de alta definição. Já vem com sistema Canbus integrado, evitando avisos de lâmpada queimada no painel.",
+    specs: [
+      { label: "Encaixe", value: "T10 / W5W (Pingo)" },
+      { label: "Luminosidade", value: "1600 Lúmens" },
+      { label: "Temperatura de cor", value: "6000K · Branco Frio" },
+      { label: "Construção", value: "Lente com Mini Projetor" },
+      { label: "Tecnologia", value: "Canbus integrado (Sem erro no painel)" }
+    ],
+    price: 60,
+    priceLabel: "Preço do Par",
+    priceUnit: "par"
   }
-]
+];
