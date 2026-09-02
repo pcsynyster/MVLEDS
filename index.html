@@ -147,6 +147,51 @@
       </div>
     </div>
   </section>
+  
+  <!-- ============================================================
+     SIMULADOR DE TEMPERATURA (KELVIN)
+     ============================================================ -->
+<section class="kelvin-section" id="temperatura">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow">Guia Visual</span>
+        <h2>Temperatura de Cor (Kelvin)</h2>
+      </div>
+      <p>Veja na prática a tonalidade do feixe e escolha a opção ideal para a sua necessidade na pista.</p>
+    </div>
+
+    <div class="kelvin-box">
+      <!-- Visor com o feixe iluminando a estrada -->
+      <div class="kelvin-display">
+        <div class="kelvin-road"></div>
+        <div class="kelvin-beam" id="kelvinBeam"></div>
+        <div class="kelvin-hud">
+          <span class="hud-label">PROJEÇÃO DO FEIXE</span>
+          <span class="hud-value" id="hudValue">6000K · BRANCO PURO</span>
+        </div>
+      </div>
+
+      <!-- Controles e Explicação -->
+      <div class="kelvin-controls">
+        <div class="kelvin-buttons" role="group" aria-label="Selecione a temperatura de cor">
+          <button type="button" class="k-btn" data-kelvin="3000">3000K</button>
+          <button type="button" class="k-btn" data-kelvin="4300">4300K</button>
+          <button type="button" class="k-btn active" data-kelvin="6000">6000K</button>
+        </div>
+
+        <div class="kelvin-info" id="kelvinInfo">
+          <h3 id="infoTitle">6000K — Branco Puro (Super Branca)</h3>
+          <p id="infoDesc">É a escolha mais popular e moderna. Oferece visual esportivo de alta definição, realçando placas reflexivas e faixas de trânsito em vias pavimentadas sem esforço visual.</p>
+          <ul class="info-specs" id="infoSpecs">
+            <li><strong>Aplicação recomendada:</strong> Uso urbano, rodovias e estética moderna.</li>
+            <li><strong>Contraste:</strong> Alto realce de placas e sinalização.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
   <!-- ============================================================
        RESULTADOS / INSTAGRAM STORIES

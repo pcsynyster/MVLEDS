@@ -681,3 +681,60 @@
 
   document.addEventListener("DOMContentLoaded", init);
 })();
+// ============================================
+// SIMULADOR KELVIN (TEMPERATURA DE COR)
+// ============================================
+const kelvinData = {
+  3000: {
+    hud: '3000K · AMARELO ',
+    title: '3000K — Amarelo Ouro (Penetração Máxima)',
+    desc: 'Projetada para quebrar o reflexo de gotículas de água e partículas em suspensão. É a opção técnica definitiva para chuva pesada, neblina e asfalto molhado.',
+    app: 'Faróis de neblina/milha e veículos de viagem/estrada frequente.',
+    contrast: 'Penetração superior em mau tempo, sem rebater a luz contra os olhos.',
+    beam: 'radial-gradient(ellipse at bottom, rgba(255, 210, 80, 0.95) 0%, rgba(255, 170, 0, 0.5) 45%, transparent 75%)'
+  },
+  4300: {
+    hud: '4300K · BRANCO QUENTE ',
+    title: '4300K — Branco Quente (Padrão Original de Fábrica)',
+    desc: 'A mesma tonalidade dos faróis de xênon e LED originais de montadora. Proporciona iluminação com excelente índice de reprodução de cor, discreta e sem chamar atenção em fiscalizações.',
+    app: 'Farol principal de quem busca máxima discrição com alta eficiência.',
+    contrast: 'Excelente leitura de relevo e buracos em asfalto escuro.',
+    beam: 'radial-gradient(ellipse at bottom, rgba(255, 248, 220, 0.95) 0%, rgba(255, 230, 170, 0.45) 45%, transparent 75%)'
+  },
+  6000: {
+    hud: '6000K · BRANCO PURO ',
+    title: '6000K — Branco Puro (O Mais Procurado)',
+    desc: 'É a escolha mais popular e moderna. Oferece visual esportivo de alta definição, realçando placas reflexivas e faixas de trânsito em vias pavimentadas sem esforço visual.',
+    app: 'Uso urbano, rodovias bem pavimentadas e estética esportiva moderna.',
+    contrast: 'Alto realce de placas de sinalização e olhos de gato.',
+    beam: 'radial-gradient(ellipse at bottom, rgba(235, 245, 255, 0.95) 0%, rgba(180, 215, 255, 0.5) 45%, transparent 75%)'
+  }
+};
+
+const kButtons = document.querySelectorAll('.k-btn');
+const kelvinBeam = document.getElementById('kelvinBeam');
+const hudValue = document.getElementById('hudValue');
+const infoTitle = document.getElementById('infoTitle');
+const infoDesc = document.getElementById('infoDesc');
+const infoSpecs = document.getElementById('infoSpecs');
+
+kButtons.forEach(btn => {
+  btn.addEventListener('click', () => {
+    kButtons.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    const k = btn.dataset.kelvin;
+    const data = kelvinData[k];
+
+    if (!data) return;
+
+    kelvinBeam.style.background = data.beam;
+    hudValue.textContent = data.hud;
+    infoTitle.textContent = data.title;
+    infoDesc.textContent = data.desc;
+    infoSpecs.innerHTML = `
+      <li><strong>Aplicação recomendada:</strong> ${data.app}</li>
+      <li><strong>Contraste:</strong> ${data.contrast}</li>
+    `;
+  });
+});
