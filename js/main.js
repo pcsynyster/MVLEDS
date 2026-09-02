@@ -738,3 +738,84 @@ kButtons.forEach(btn => {
     `;
   });
 });
+/* Combos e upsell no carrinho */
+const quickAddItems = [
+  {
+    id: 'pingo-t10-silicone',
+    name: 'Par Pingo T10 Silicone (Farolete)',
+    price: 'Consultar via WhatsApp'
+  },
+  {
+    id: 'led-placa-t10',
+    name: 'Par LED Luz de Placa',
+    price: 'Consultar via WhatsApp'
+  },
+  {
+    id: 'kit-interno-teto',
+    name: 'Kit LED Cortesia / Teto',
+    price: 'Consultar via WhatsApp'
+  }
+];
+
+function renderCartUpsell() {
+  const upsellContainer = document.getElementById('upsellList');
+  const upsellWrapper = document.getElementById('cartUpsell');
+  if (!upsellContainer || !upsellWrapper) return;
+
+  if (typeof cart !== 'undefined' && cart.length === 0) {
+    upsellWrapper.style.display = 'none';
+    return;
+  }
+  upsellWrapper.style.display = 'block';
+
+  upsellContainer.innerHTML = quickAddItems.map(item => {
+    const priceDisplay = typeof item.price === 'number' 
+      ? `+ R$ ${item.price.toFixed(2).replace('.', ',')}` 
+      : item.price;
+
+    return `
+      <div class="upsell-card">
+        <div class="upsell-info">
+          <span class="upsell-name">${item.name}</span>
+          <span class="upsell-price">${priceDisplay}</span>
+        </div>
+        <button type="button" class="btn-upsell-add" onclick="addQuickItem('${item.id}')">
+          + Adicionar
+        </button>
+      </div>
+    `;
+  }).join('');
+}
+
+window.addQuickItem = function(itemId) {
+  const item = quickAddItems.find(i => i.id === itemId);
+  if (!item) return;
+
+  if (typeof cart !== 'undefined') {
+    const existing = cart.find(p => p.id === item.id);
+    if (existing) {
+      existing.quantity = (existing.quantity || 1) + 1;
+    } else {
+      cart.push({
+        id: item.id,
+        name: item.name,
+        price: item.price,
+        quantity: 1
+      });
+    }
+
+    // Executa as funções nativas do seu site para atualizar a tela e salvar
+    if (typeof updateCart === 'function') updateCart();
+    else if (typeof renderCart === 'function') renderCart();
+    if (typeof saveCart === 'function') saveCart();
+    if (typeof updateCartCount === 'function') updateCartCount();
+  }
+};
+
+// Dispara a verificação sempre que o botão de abrir o carrinho for clicado
+const cartBtnToggle = document.getElementById('cartToggle');
+if (cartBtnToggle) {
+  cartBtnToggle.addEventListener('click', () => {
+    setTimeout(renderCartUpsell, 50);
+  });
+}

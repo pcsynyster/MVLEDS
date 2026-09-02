@@ -1,12 +1,4 @@
-/* ============================================================
-   MV LEDs — Estilos
-   Tokens de design:
-   Cor:   --void, --panel, --panel-raised, --red, --red-deep,
-          --ice, --steel, --line
-   Tipo:  --font-display (Teko), --font-body (Inter),
-          --font-mono (JetBrains Mono)
-   ============================================================ */
-
+/* Tokens e variáveis */
 :root {
   --void: #08090a;
   --panel: #131316;
@@ -21,8 +13,7 @@
   --success: #33c17a;
 
   --font-display: "Teko", "Arial Narrow", sans-serif;
-  --font-body: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
-    sans-serif;
+  --font-body: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
 
   --radius-sm: 6px;
@@ -118,10 +109,7 @@ p {
   outline-offset: 3px;
 }
 
-/* ------------------------------------------------------------
-   Botões
-   ------------------------------------------------------------ */
-
+/* Botões */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -173,11 +161,13 @@ p {
 .btn-whatsapp:hover {
   background: #24c96a;
 }
+
 .btn-whatsapp svg {
   width: 20px;
   height: 20px;
   flex-shrink: 0;
 }
+
 .btn-block {
   width: 100%;
 }
@@ -193,10 +183,7 @@ p {
   transform: none !important;
 }
 
-/* ------------------------------------------------------------
-   Header
-   ------------------------------------------------------------ */
-
+/* Header */
 .site-header {
   position: fixed;
   top: 0;
@@ -322,10 +309,7 @@ p {
   height: 20px;
 }
 
-/* ------------------------------------------------------------
-   Hero
-   ------------------------------------------------------------ */
-
+/* Hero */
 .hero {
   position: relative;
   padding: calc(var(--header-h) + 90px) 0 100px;
@@ -466,10 +450,7 @@ p {
   color: var(--steel-dim);
 }
 
-/* ------------------------------------------------------------
-   Seções gerais
-   ------------------------------------------------------------ */
-
+/* Estrutura geral de seções */
 section {
   padding: 96px 0;
 }
@@ -498,10 +479,7 @@ section {
   font-size: 0.98rem;
 }
 
-/* ------------------------------------------------------------
-   Filtros de categoria
-   ------------------------------------------------------------ */
-
+/* Filtros de categoria */
 .filters {
   display: flex;
   flex-wrap: wrap;
@@ -532,10 +510,7 @@ section {
   color: #fff;
 }
 
-/* ------------------------------------------------------------
-   Grid / cards de produto
-   ------------------------------------------------------------ */
-
+/* Grid e cards de produto */
 .product-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
@@ -549,8 +524,7 @@ section {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  transition: transform 0.2s ease, border-color 0.2s ease,
-    box-shadow 0.2s ease;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
   text-align: left;
   width: 100%;
   padding: 0;
@@ -686,8 +660,7 @@ section {
   background: var(--panel-raised);
   border: 1px solid var(--panel-line);
   color: var(--ice);
-  transition: background-color 0.15s ease, border-color 0.15s ease,
-    transform 0.15s ease;
+  transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
   flex-shrink: 0;
 }
 
@@ -711,10 +684,7 @@ section {
   transform: scale(0.92);
 }
 
-/* ------------------------------------------------------------
-   Resultados / Stories (Instagram)
-   ------------------------------------------------------------ */
-
+/* Resultados e Stories */
 .section-stories {
   border-top: 1px solid var(--panel-line);
   background: var(--void);
@@ -804,10 +774,7 @@ section {
   gap: 10px;
 }
 
-/* ------------------------------------------------------------
-   Sobre
-   ------------------------------------------------------------ */
-
+/* Sobre */
 .about {
   border-top: 1px solid var(--panel-line);
   background: var(--panel);
@@ -878,10 +845,7 @@ section {
   color: var(--steel);
 }
 
-/* ------------------------------------------------------------
-   Contato
-   ------------------------------------------------------------ */
-
+/* Contato */
 .contact-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -940,10 +904,7 @@ section {
   text-transform: none;
 }
 
-/* ------------------------------------------------------------
-   Footer
-   ------------------------------------------------------------ */
-
+/* Footer */
 .site-footer {
   border-top: 1px solid var(--panel-line);
   padding: 40px 0;
@@ -983,10 +944,7 @@ section {
   color: var(--steel-dim);
 }
 
-/* ------------------------------------------------------------
-   Botão flutuante do WhatsApp
-   ------------------------------------------------------------ */
-
+/* Botão flutuante do WhatsApp */
 .wa-float {
   position: fixed;
   right: 20px;
@@ -1029,10 +987,7 @@ section {
   }
 }
 
-/* ------------------------------------------------------------
-   Carrinho (drawer)
-   ------------------------------------------------------------ */
-
+/* Carrinho (drawer) */
 .overlay {
   position: fixed;
   inset: 0;
@@ -1233,6 +1188,91 @@ section {
   height: 16px;
 }
 
+/* Combos e upsell no carrinho */
+.cart-upsell {
+  padding: 14px 16px;
+  background: #0d1015;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.upsell-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.upsell-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  color: #ff3344;
+  letter-spacing: 1px;
+}
+
+.upsell-subtitle {
+  font-size: 11px;
+  color: #64748b;
+}
+
+.upsell-items {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.upsell-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #12151b;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 8px 12px;
+  border-radius: 6px;
+  transition: border-color 0.2s ease;
+}
+
+.upsell-card:hover {
+  border-color: rgba(225, 29, 72, 0.3);
+}
+
+.upsell-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.upsell-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: #f1f5f9;
+}
+
+.upsell-price {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: #ff3344;
+  font-weight: 700;
+}
+
+.btn-upsell-add {
+  background: rgba(225, 29, 72, 0.12);
+  color: #ff3344;
+  border: 1px solid rgba(225, 29, 72, 0.3);
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-upsell-add:hover {
+  background: #ff3344;
+  color: #ffffff;
+}
+
 .drawer-footer {
   border-top: 1px solid var(--panel-line);
   padding: 20px 22px 24px;
@@ -1279,10 +1319,7 @@ section {
   color: var(--red-bright);
 }
 
-/* ------------------------------------------------------------
-   Modal de produto
-   ------------------------------------------------------------ */
-
+/* Modal de produto */
 .modal {
   position: fixed;
   inset: 0;
@@ -1461,6 +1498,7 @@ section {
   margin-top: 6px;
 }
 
+/* Toast de confirmação */
 .toast {
   position: fixed;
   left: 50%;
@@ -1492,10 +1530,7 @@ section {
   transform: translate(-50%, 0);
 }
 
-/* ------------------------------------------------------------
-   Responsivo
-   ------------------------------------------------------------ */
-
+/* Responsividade geral */
 @media (max-width: 900px) {
   .about-grid {
     grid-template-columns: 1fr;
@@ -1617,9 +1652,8 @@ section {
     grid-template-columns: repeat(2, 1fr);
   }
 }
-/* =========================================
-   SEÇÃO DE GARANTIA & CONFIANÇA
-========================================= */
+
+/* Garantia e confiança */
 .warranty-section {
   padding: 60px 20px;
   background-color: #0b0d10;
@@ -1725,9 +1759,8 @@ section {
   line-height: 1.5;
   margin: 0;
 }
-/* =========================================
-   FAQ / DÚVIDAS FREQUENTES
-========================================= */
+
+/* FAQ e dúvidas frequentes */
 .faq-section {
   padding: 80px 0;
   border-top: 1px solid rgba(255, 255, 255, 0.05);
@@ -1794,9 +1827,8 @@ section {
   font-size: 14px;
   line-height: 1.6;
 }
-/* =========================================
-   SIMULADOR DE TEMPERATURA (KELVIN)
-========================================= */
+
+/* Simulador Kelvin */
 .kelvin-section {
   padding: 80px 0;
   border-top: 1px solid rgba(255, 255, 255, 0.05);
@@ -1821,7 +1853,6 @@ section {
   justify-content: center;
 }
 
-/* Estrada simulada em perspectiva */
 .kelvin-road {
   position: absolute;
   bottom: 0;
@@ -1833,7 +1864,6 @@ section {
   opacity: 0.25;
 }
 
-/* O feixe de luz dinâmico */
 .kelvin-beam {
   position: absolute;
   bottom: -40px;
@@ -1843,7 +1873,6 @@ section {
   filter: blur(28px);
   opacity: 0.85;
   transition: background 0.35s ease, opacity 0.35s ease;
-  /* Cor inicial 6000K */
   background: radial-gradient(ellipse at bottom, rgba(235, 245, 255, 0.95) 0%, rgba(180, 215, 255, 0.5) 45%, transparent 75%);
 }
 
