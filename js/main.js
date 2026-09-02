@@ -266,7 +266,7 @@
     if (product.variants) {
       variantMarkup = `
         <div class="variant-picker">
-          <span class="field-label">Encaixe</span>
+          <span class="field-label">Opção</span>
           <div class="variant-options" id="variantOptions">
             ${product.variants
               .map(
@@ -448,6 +448,15 @@
         hasOnRequest = true;
         return;
       }
+
+      // Regra de desconto de par para o LED Projetor (avulso R$ 150 / par R$ 280)
+      if (line.productId === "led-projetor" && (line.variantId === "unidade" || !line.variantId)) {
+        const pares = Math.floor(line.qty / 2);
+        const avulsos = line.qty % 2;
+        subtotal += (pares * 280) + (avulsos * 150);
+        return;
+      }
+
       subtotal += unitPrice(product, line.variantId) * line.qty;
     });
 
@@ -542,6 +551,17 @@
         const priceKnown = isPriceKnown(product);
         const unit = priceKnown ? unitPrice(product, line.variantId) : 0;
 
+        // Exibição com desconto se for LED Projetor
+        let priceString = "";
+        if (line.productId === "led-projetor" && (line.variantId === "unidade" || !line.variantId) && line.qty >= 2) {
+          const pares = Math.floor(line.qty / 2);
+          const avulsos = line.qty % 2;
+          const totalLinha = (pares * 280) + (avulsos * 150);
+          priceString = `${formatBRL(totalLinha)} <span style="color:var(--success);font-size:0.75rem;display:inline-block;margin-left:4px;">(Desconto Par)</span>`;
+        } else {
+          priceString = priceKnown ? formatBRL(unit * line.qty) : "Valor a combinar";
+        }
+
         return `
         <div class="cart-item" data-line="${line.lineId}">
           <div class="cart-item-media">
@@ -554,9 +574,7 @@
                 ? `<span class="cart-item-variant">${variant.label}</span>`
                 : ""
             }
-            <span class="cart-item-price">${
-              priceKnown ? formatBRL(unit) : "Valor a combinar"
-            }</span>
+            <span class="cart-item-price">${priceString}</span>
             <div class="qty-stepper">
               <button type="button" data-qty-step="-1">−</button>
               <span>${line.qty}</span>
@@ -644,7 +662,13 @@
 
       let itemLine = `• ${line.qty}x ${product.name}`;
       if (variant) itemLine += ` (${variant.label})`;
-      if (priceKnown) {
+
+      if (line.productId === "led-projetor" && (line.variantId === "unidade" || !line.variantId) && line.qty >= 2) {
+        const pares = Math.floor(line.qty / 2);
+        const avulsos = line.qty % 2;
+        const totalLinha = (pares * 280) + (avulsos * 150);
+        itemLine += ` — ${formatBRL(totalLinha)} (com desconto de par)`;
+      } else if (priceKnown) {
         itemLine += ` — ${formatBRL(unit * line.qty)}`;
       } else {
         itemLine += ` — valor a combinar`;
