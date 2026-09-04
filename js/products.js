@@ -1,26 +1,3 @@
-/* ============================================================
-   CATÁLOGO DE PRODUTOS — MV LEDs
-   ------------------------------------------------------------
-   Para ADICIONAR um produto novo: copie um bloco { ... } inteiro,
-   cole no final da lista (antes do ]) e ajuste os campos.
-
-   Campos de cada produto:
-   - id            : identificador único (sem espaços)
-   - name          : nome exibido
-   - category      : chave da categoria (ver CATEGORIES abaixo)
-   - image         : caminho da imagem (pasta assets/images)
-   - shortDesc     : descrição curta (aparece no card)
-   - description   : descrição completa (aparece no detalhe)
-   - specs         : lista de { label, value } — ficha técnica
-   - price         : preço em reais (número) OU null se não informado
-   - priceLabel    : texto antes do preço, ex. "A partir de"
-   - priceUnit     : unidade, ex. "unidade", "lâmpada"
-   - priceOnRequest: true quando o preço ainda não foi informado
-                      (o produto pode ser adicionado ao carrinho
-                      normalmente, mas entra como "valor a combinar")
-   - variants      : opcional — lista de { id, label, price } quando
-                      o preço muda por tipo de encaixe/versão
-   ============================================================ */
 
 const CATEGORIES = [
   { key: "todos", label: "Todos" },
