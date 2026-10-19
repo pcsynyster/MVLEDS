@@ -17,4 +17,11 @@ const CONFIG = {
   // (sem produtos, apenas um "oi" comercial)
   WHATSAPP_DEFAULT_MESSAGE:
     "Olá! Vim pelo site da MV LEDs e gostaria de mais informações.",
+
+  // Barra de vantagem do carrinho: valor mínimo (R$) e benefício liberado.
+  // Para desativar, use threshold: 0
+  CART_GOAL: {
+    threshold: 300,
+    reward: "instalação grátis na loja",
+  },
 };
