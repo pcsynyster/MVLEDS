@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Teko:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
 
-<link rel="stylesheet" href="css/styles.css?v=5" />
+<link rel="stylesheet" href="css/styles.css?v=6" />
 </head>
 <body>
 
@@ -32,7 +32,6 @@
     <nav class="main-nav" id="mainNav">
       <a href="#produtos">Produtos</a>
       <a href="#garantia">Garantia</a>
-      <a href="#resultados">Resultados</a>
       <a href="#sobre">Sobre a MVLEDS</a>
       <a href="#contato">Contato</a>
     </nav>
@@ -73,15 +72,15 @@
 
     <figure class="vitrine" id="vitrine">
       <div class="vitrine-palco">
-        <video class="vitrine-video" id="vitrineVideo" muted loop playsinline preload="none" poster="assets/images/vitrine-capa.jpg" data-src-desktop="assets/video/vitrine-desktop.mp4" data-src-mobile="assets/video/vitrine-mobile.mp4" data-poster-mobile="assets/images/vitrine-capa-m.jpg" aria-label="Montagem com instalações reais da MV LEDs: Audi A3, Toyota SW4, Hyundai HB20, Volkswagen Polo e Honda Civic">
-          <source src="assets/video/vitrine-desktop.mp4" type="video/mp4" />
+        <video class="vitrine-video" id="vitrineVideo" muted loop playsinline preload="none" poster="assets/images/vitrine-capa.jpg?v=2" data-src-desktop="assets/video/vitrine-desktop.mp4?v=2" data-src-mobile="assets/video/vitrine-mobile.mp4?v=2" data-poster-mobile="assets/images/vitrine-capa-m.jpg?v=2" aria-label="Montagem com instalações reais da MV LEDs: Audi A3, Toyota SW4, Hyundai HB20, Volkswagen Polo e Honda Civic">
+          <source src="assets/video/vitrine-desktop.mp4?v=2" type="video/mp4" />
         </video>
         <span class="vitrine-play" aria-hidden="true">
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13l11-6.5z"/></svg>
         </span>
       </div>
       <figcaption class="container vitrine-barra">
-        <span class="vitrine-legenda"><i aria-hidden="true"></i>Instalações reais feitas na loja</span>
+        <a class="vitrine-legenda" href="https://www.instagram.com/mv.leds/" target="_blank" rel="noopener"><i aria-hidden="true"></i>Instalações reais · <b>@mv.leds</b></a>
         <button type="button" class="vitrine-som" id="vitrineSom" aria-pressed="false">
           <svg class="i-mudo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><line x1="22" y1="9" x2="16" y2="15"/><line x1="16" y1="9" x2="22" y2="15"/></svg>
           <svg class="i-som" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>
@@ -211,60 +210,6 @@
             </ul>
           </div>
         </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Resultados Instagram -->
-  <section id="resultados" class="section-stories">
-    <div class="container">
-      <div class="section-head" data-reveal>
-        <div>
-          <span class="eyebrow">Galeria de Resultados</span>
-          <h2>Serviços Realizados</h2>
-        </div>
-        <p>Confira o resultado dos carros finalizados.</p>
-      </div>
-
-      <div class="stories-carousel-wrapper">
-        <div class="stories-track" data-reveal-stagger>
-          <a href="https://www.instagram.com/p/Dbq4WU6T8gR/" target="_blank" rel="noopener" class="story-card" data-reveal>
-            <img src="assets/images/story-honda.png" alt="Revitalização de Faróis MV LEDs">
-            <span class="story-tag">Honda Civic</span>
-          </a>
-
-          <a href="https://www.instagram.com/p/Dbbjjt1TWk9/" target="_blank" rel="noopener" class="story-card" data-reveal>
-            <img src="assets/images/story-audi.png" alt="Regulagem de Farol MV LEDs">
-            <span class="story-tag">Audi A3</span>
-          </a>
-
-          <a href="https://www.instagram.com/p/Dcun08pjS5S/?img_index=1" target="_blank" rel="noopener" class="story-card" data-reveal>
-            <img src="assets/images/story-g9garage.png" alt="Instalação de LED Forte">
-            <span class="story-tag">Honda @G9garage_</span>
-          </a>
-
-          <a href="https://www.instagram.com/p/Db3Rga1T9WT/" target="_blank" rel="noopener" class="story-card" data-reveal>
-            <img src="assets/images/story-onix.png" alt="MV LEDs Parnamirim">
-            <span class="story-tag">Onix Turbo</span>
-          </a>
-
-          <a href="https://www.instagram.com/mv.leds/" target="_blank" rel="noopener" class="story-card" data-reveal>
-            <img src="assets/images/LED-PROJETOR.jpeg" alt="MV LEDs Parnamirim">
-            <span class="story-tag">Projetor</span>
-          </a>
-          
-          <a href="https://www.instagram.com/mv.leds/" target="_blank" rel="noopener" class="story-card" data-reveal>
-            <img src="assets/images/seta-conjugada.png" alt="MV LEDs Parnamirim">
-            <span class="story-tag">Seta Conjugada</span>
-          </a>
-        </div>
-      </div>
-
-      <div class="stories-footer">
-        <a href="https://www.instagram.com/mv.leds/" target="_blank" rel="noopener" class="btn btn-primary btn-insta-follow">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2m-.2 2A3.6 3.6 0 0 0 4 7.6v8.8C4 18.39 5.61 20 7.6 20h8.8a3.6 3.6 0 0 0 3.6-3.6V7.6C20 5.61 18.39 4 16.4 4H7.6m9.65 1.5a1.25 1.25 0 0 1 1.25 1.25A1.25 1.25 0 0 1 17.25 8 1.25 1.25 0 0 1 16 6.75a1.25 1.25 0 0 1 1.25-1.25M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3Z"/></svg>
-          Seguir @mv.leds no Instagram
-        </a>
       </div>
     </div>
   </section>
@@ -421,7 +366,6 @@
     <nav class="footer-links">
       <a href="#produtos">Produtos</a>
       <a href="#garantia">Garantia</a>
-      <a href="#resultados">Resultados</a>
       <a href="#sobre">Sobre</a>
       <a href="#contato">Contato</a>
     </nav>
