@@ -606,91 +606,6 @@ p {
   transform: none;
 }
 
-.vitrine-barra {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  margin-top: 18px;
-}
-
-.vitrine-legenda {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  font-family: var(--font-mono);
-  font-size: 0.74rem;
-  letter-spacing: 0.04em;
-  color: var(--steel);
-}
-
-.vitrine-legenda b {
-  color: var(--ice);
-  font-weight: 700;
-}
-
-.vitrine-legenda:hover b {
-  color: var(--red-bright);
-}
-
-.vitrine-legenda i {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--red-bright);
-  box-shadow: 0 0 10px var(--red-bright);
-  animation: pulse-dot 1.6s ease-in-out infinite;
-}
-
-.vitrine-som {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  flex-shrink: 0;
-  padding: 10px 16px 10px 12px;
-  border-radius: 999px;
-  border: 1px solid var(--panel-line);
-  background: var(--panel);
-  color: var(--ice);
-  font-size: 0.84rem;
-  font-weight: 600;
-  transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s var(--ease-out);
-}
-
-.vitrine-som:hover {
-  background: var(--red);
-  border-color: var(--red);
-}
-
-.vitrine-som:active {
-  transform: scale(0.95);
-}
-
-.vitrine-som svg {
-  width: 18px;
-  height: 18px;
-}
-
-.vitrine-som .i-som,
-.vitrine-som[aria-pressed="true"] .i-mudo {
-  display: none;
-}
-
-.vitrine-som[aria-pressed="true"] .i-som {
-  display: block;
-}
-
-.vitrine-som[aria-pressed="false"]::after {
-  content: "";
-  position: absolute;
-  inset: -1px;
-  border-radius: inherit;
-  border: 2px solid rgba(255, 255, 255, 0.5);
-  animation: wa-ring 2.6s ease-out 2s infinite;
-  pointer-events: none;
-}
-
 .hero > .hero-meta {
   justify-content: center;
 }
@@ -3236,10 +3151,6 @@ section {
   .vitrine-palco {
     -webkit-mask-image: none;
     mask-image: none;
-  }
-
-  .vitrine-legenda {
-    font-size: 0.68rem;
   }
 
   .hero-glare {

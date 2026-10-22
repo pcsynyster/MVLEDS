@@ -1193,20 +1193,17 @@
   }
 
   /* FAQ com abertura suave (um item aberto por vez) */
-  /* Vitrine de vídeos no hero: toca mudo, som sob demanda, pausa fora da tela */
+  /* Vitrine de vídeos no hero: toca sem som e pausa fora da tela */
   function initVitrine() {
     const wrap = $("vitrine");
     const video = $("vitrineVideo");
-    const somBtn = $("vitrineSom");
-    if (!wrap || !video || !somBtn) return;
+    if (!wrap || !video) return;
 
-    const texto = somBtn.querySelector(".vitrine-som-texto");
-    const mobile = window.matchMedia("(max-width: 760px)").matches;
     const saveData = navigator.connection && navigator.connection.saveData;
     let pausadoPeloUsuario = reduceMotion() || saveData;
     let naTela = false;
 
-    if (mobile) {
+    if (window.matchMedia("(max-width: 760px)").matches) {
       video.poster = video.dataset.posterMobile;
       video.querySelector("source").src = video.dataset.srcMobile;
       video.load();
@@ -1222,25 +1219,6 @@
 
     video.addEventListener("play", () => marcarPausa(false));
     video.addEventListener("pause", () => marcarPausa(true));
-
-    function ligarSom(ligar) {
-      video.muted = !ligar;
-      somBtn.setAttribute("aria-pressed", String(ligar));
-      texto.textContent = ligar ? "Som ligado" : "Ativar som";
-      if (!ligar) return;
-      video.volume = 0;
-      const inicio = performance.now();
-      const subir = (agora) => {
-        const t = Math.min(Math.max((agora - inicio) / 600, 0), 1);
-        video.volume = t;
-        if (t < 1 && !video.muted) requestAnimationFrame(subir);
-      };
-      requestAnimationFrame(subir);
-      pausadoPeloUsuario = false;
-      tocar();
-    }
-
-    somBtn.addEventListener("click", () => ligarSom(video.muted));
 
     wrap.querySelector(".vitrine-palco").addEventListener("click", () => {
       if (video.paused) {

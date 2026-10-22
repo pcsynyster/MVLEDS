@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Teko:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
 
-<link rel="stylesheet" href="css/styles.css?v=6" />
+<link rel="stylesheet" href="css/styles.css?v=7" />
 </head>
 <body>
 
@@ -70,24 +70,16 @@
       </div>
     </div>
 
-    <figure class="vitrine" id="vitrine">
+    <div class="vitrine" id="vitrine">
       <div class="vitrine-palco">
-        <video class="vitrine-video" id="vitrineVideo" muted loop playsinline preload="none" poster="assets/images/vitrine-capa.jpg?v=2" data-src-desktop="assets/video/vitrine-desktop.mp4?v=2" data-src-mobile="assets/video/vitrine-mobile.mp4?v=2" data-poster-mobile="assets/images/vitrine-capa-m.jpg?v=2" aria-label="Montagem com instalações reais da MV LEDs: Audi A3, Toyota SW4, Hyundai HB20, Volkswagen Polo e Honda Civic">
-          <source src="assets/video/vitrine-desktop.mp4?v=2" type="video/mp4" />
+        <video class="vitrine-video" id="vitrineVideo" muted loop playsinline preload="none" poster="assets/images/vitrine-capa.jpg?v=2" data-src-desktop="assets/video/vitrine-desktop.mp4?v=3" data-src-mobile="assets/video/vitrine-mobile.mp4?v=3" data-poster-mobile="assets/images/vitrine-capa-m.jpg?v=2" aria-label="Montagem com instalações reais da MV LEDs: Audi A3, Toyota SW4, Hyundai HB20, Volkswagen Polo e Honda Civic">
+          <source src="assets/video/vitrine-desktop.mp4?v=3" type="video/mp4" />
         </video>
         <span class="vitrine-play" aria-hidden="true">
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13l11-6.5z"/></svg>
         </span>
       </div>
-      <figcaption class="container vitrine-barra">
-        <a class="vitrine-legenda" href="https://www.instagram.com/mv.leds/" target="_blank" rel="noopener"><i aria-hidden="true"></i>Instalações reais · <b>@mv.leds</b></a>
-        <button type="button" class="vitrine-som" id="vitrineSom" aria-pressed="false">
-          <svg class="i-mudo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><line x1="22" y1="9" x2="16" y2="15"/><line x1="16" y1="9" x2="22" y2="15"/></svg>
-          <svg class="i-som" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>
-          <span class="vitrine-som-texto">Ativar som</span>
-        </button>
-      </figcaption>
-    </figure>
+    </div>
 
     <div class="container hero-meta">
       <div class="hero-meta-item">
@@ -446,7 +438,7 @@
 
 <script src="js/config.js"></script>
 <script src="js/products.js?v=4"></script>
-<script src="js/main.js?v=4"></script>
+<script src="js/main.js?v=5"></script>
 <script defer src="/_vercel/insights/script.js"></script>
 </body>
 </html>
