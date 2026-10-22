@@ -279,7 +279,9 @@
       (cat) =>
         `<button type="button" class="filter-chip" data-filter="${cat.key}" aria-pressed="${
           cat.key === state.activeCategory
-        }">${cat.label}</button>`
+        }">${cat.label}<span class="filter-count">${
+          cat.key === "todos" ? PRODUCTS.length : PRODUCTS.filter((p) => p.category === cat.key).length
+        }</span></button>`
     ).join("");
   }
 
@@ -320,10 +322,53 @@
       </div>`;
   }
 
+  const MAX_POWER = Math.max(...PRODUCTS.map((p) => p.power || 0));
+
+  function powerMarkup(product) {
+    if (!product.power) return "";
+    return `
+      <div class="power" style="--power:${(product.power / MAX_POWER).toFixed(3)}">
+        <span class="power-label">Potência</span>
+        <span class="power-track" aria-hidden="true"><i></i></span>
+        <span class="power-value">${product.power} mil lm</span>
+      </div>`;
+  }
+
+  function highlightsMarkup(product) {
+    if (!product.highlights?.length) return "";
+    return `<ul class="product-chips">${product.highlights
+      .map((h) => `<li>${h}</li>`)
+      .join("")}</ul>`;
+  }
+
+  function powerCompareMarkup(product) {
+    if (!product.power) return "";
+    const line = PRODUCTS.filter((p) => p.power).sort((a, b) => a.power - b.power);
+    return `
+      <div class="power-compare">
+        <span class="field-label">Compare a linha LED</span>
+        ${line
+          .map(
+            (p) => `
+          <button type="button" class="power-row${p.id === product.id ? " is-current" : ""}" data-open="${p.id}" ${
+              p.id === product.id ? 'aria-current="true"' : ""
+            }>
+            <span class="power-row-name">${p.power} mil lm</span>
+            <span class="power-track" style="--power:${(p.power / MAX_POWER).toFixed(3)}" aria-hidden="true"><i></i></span>
+            <span class="power-row-price">${
+              p.variants ? formatBRL(Math.min(...p.variants.map((v) => v.price))) : "Consulta"
+            }</span>
+          </button>`
+          )
+          .join("")}
+      </div>`;
+  }
+
   function productCardMarkup(product) {
     return `
       <div class="product-media">
         <span class="product-tag">${categoryLabel(product)}</span>
+        ${product.badge ? `<span class="product-badge product-badge--${product.badge.tone || "red"}">${product.badge.text}</span>` : ""}
         <img src="${product.image}" alt="${product.name}" loading="lazy" />
         <span class="card-glow" aria-hidden="true"></span>
       </div>
@@ -332,13 +377,25 @@
           <button type="button" class="card-open" data-id="${product.id}" aria-haspopup="dialog">${product.name}</button>
         </h3>
         <p class="product-desc">${product.shortDesc}</p>
+        ${highlightsMarkup(product)}
+        ${powerMarkup(product)}
       </div>
       <div class="product-body product-body--footer">
         <div class="product-footer">
-          ${productPriceMarkup(product)}
-          <button type="button" class="add-btn" data-quick-add="${product.id}" aria-label="Adicionar ${product.name} ao carrinho">
-            ${ICONS.plus}${ICONS.check}<span class="spinner" aria-hidden="true"></span>
-          </button>
+          <div class="price-block">
+            ${productPriceMarkup(product)}
+            ${product.priceNote ? `<span class="price-note">${product.priceNote}</span>` : ""}
+          </div>
+          ${
+            product.variants
+              ? `<button type="button" class="choose-btn" data-choose="${product.id}" aria-label="Escolher opção de ${product.name}">
+                  <span class="choose-text">Escolher</span>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>
+                </button>`
+              : `<button type="button" class="add-btn" data-quick-add="${product.id}" aria-label="Adicionar ${product.name} ao carrinho">
+                  ${ICONS.plus}${ICONS.check}<span class="spinner" aria-hidden="true"></span>
+                </button>`
+          }
         </div>
       </div>`;
   }
@@ -390,6 +447,11 @@
 
   function initGrid() {
     els.grid.addEventListener("click", (e) => {
+      const chooseBtn = e.target.closest("[data-choose]");
+      if (chooseBtn) {
+        openModal(chooseBtn.dataset.choose);
+        return;
+      }
       const addBtn = e.target.closest("[data-quick-add]");
       if (addBtn) {
         quickAdd(addBtn);
@@ -559,6 +621,7 @@
       <h3 id="modalTitle">${product.name}</h3>
       <p class="modal-desc">${product.description || product.shortDesc}</p>
       ${specsMarkup}
+      ${powerCompareMarkup(product)}
       ${variantMarkup}
 
       <div class="modal-price-row">
@@ -591,6 +654,15 @@
     els.modalInfo.addEventListener("click", async (e) => {
       const product = findProduct(modalState.productId);
       if (!product) return;
+
+      const openBtn = e.target.closest("[data-open]");
+      if (openBtn) {
+        if (openBtn.dataset.open !== product.id) {
+          openModal(openBtn.dataset.open);
+          els.modalPanel.scrollTo({ top: 0, behavior: "smooth" });
+        }
+        return;
+      }
 
       const variantBtn = e.target.closest("[data-variant]");
       if (variantBtn) {
