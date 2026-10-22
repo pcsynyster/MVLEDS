@@ -1153,6 +1153,94 @@
   }
 
   /* FAQ com abertura suave (um item aberto por vez) */
+  /* Reel da loja no hero: toca mudo, som sob demanda, pausa fora da tela */
+  function initHeroReel() {
+    const wrap = $("heroReel");
+    const video = $("reelVideo");
+    const soundBtn = $("reelSound");
+    if (!wrap || !video || !soundBtn) return;
+
+    const label = soundBtn.querySelector(".reel-sound-label");
+    const bar = $("reelProgress");
+    const saveData = navigator.connection && navigator.connection.saveData;
+    let userPaused = reduceMotion() || saveData;
+    let inView = false;
+    let frame = 0;
+
+    function setPaused(paused) {
+      wrap.classList.toggle("is-paused", paused);
+    }
+
+    function tick() {
+      if (video.duration) bar.style.transform = `scaleX(${(video.currentTime / video.duration).toFixed(4)})`;
+      frame = video.paused ? 0 : requestAnimationFrame(tick);
+    }
+
+    function play() {
+      const attempt = video.play();
+      if (attempt && attempt.catch) attempt.catch(() => setPaused(true));
+    }
+
+    video.addEventListener("play", () => {
+      setPaused(false);
+      if (!frame) frame = requestAnimationFrame(tick);
+    });
+    video.addEventListener("pause", () => setPaused(true));
+
+    function setSound(on) {
+      video.muted = !on;
+      soundBtn.setAttribute("aria-pressed", String(on));
+      label.textContent = on ? "Som ligado" : "Ativar som";
+      if (on) {
+        video.volume = 0;
+        const start = performance.now();
+        const fade = (now) => {
+          const t = Math.min(Math.max((now - start) / 500, 0), 1);
+          video.volume = t;
+          if (t < 1 && !video.muted) requestAnimationFrame(fade);
+        };
+        requestAnimationFrame(fade);
+        userPaused = false;
+        play();
+      }
+    }
+
+    soundBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      setSound(video.muted);
+    });
+
+    wrap.querySelector(".reel-frame").addEventListener("click", () => {
+      if (video.paused) {
+        userPaused = false;
+        play();
+      } else {
+        userPaused = true;
+        video.pause();
+      }
+    });
+
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver(
+        (entries) => {
+          inView = entries[0].isIntersecting;
+          if (inView && !userPaused) play();
+          else if (!inView) video.pause();
+        },
+        { threshold: 0.35 }
+      ).observe(wrap);
+    } else if (!userPaused) {
+      play();
+    }
+
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) video.pause();
+      else if (inView && !userPaused) play();
+    });
+
+    setPaused(userPaused);
+  }
+
   function initFaq() {
     const items = [...document.querySelectorAll(".faq-item")];
     const DURATION = 420;
@@ -1213,6 +1301,7 @@
     initKelvin();
     initTilt();
     initFaq();
+    initHeroReel();
     reveal.init();
   }
 

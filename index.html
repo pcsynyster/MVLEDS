@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Teko:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
 
-<link rel="stylesheet" href="css/styles.css" />
+<link rel="stylesheet" href="css/styles.css?v=2" />
 </head>
 <body>
 
@@ -55,7 +55,8 @@
   <section class="hero">
     <div class="hero-beam" aria-hidden="true"></div>
     <div class="hero-glare" aria-hidden="true"></div>
-    <div class="container hero-content">
+    <div class="container hero-grid">
+    <div class="hero-content">
       <span class="eyebrow">MV LEDs · Parnamirim / RN</span>
       <h1>Ilumine seu carro<br/>com <em>potência real</em>.</h1>
       <p class="lead">
@@ -85,6 +86,30 @@
           <span>Loja física de iluminação automotiva</span>
         </div>
       </div>
+    </div>
+
+    <figure class="hero-reel" id="heroReel">
+      <div class="reel-frame">
+        <video class="reel-video" id="reelVideo" muted loop playsinline preload="metadata" poster="assets/images/reel-capa.jpg" aria-label="Vídeo da MV LEDs: Honda Civic com iluminação instalada na loja">
+          <source src="assets/video/mvleds-reel.mp4" type="video/mp4" />
+        </video>
+        <div class="reel-progress" aria-hidden="true"><span id="reelProgress"></span></div>
+        <div class="reel-top">
+          <img class="reel-avatar" src="assets/images/logo-cropped.jpeg" alt="" />
+          <span class="reel-handle">@mv.leds</span>
+          <span class="reel-tag">Na loja</span>
+        </div>
+        <span class="reel-play" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13l11-6.5z"/></svg>
+        </span>
+        <button type="button" class="reel-sound" id="reelSound" aria-pressed="false">
+          <svg class="i-mudo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><line x1="22" y1="9" x2="16" y2="15"/><line x1="16" y1="9" x2="22" y2="15"/></svg>
+          <svg class="i-som" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>
+          <span class="reel-sound-label">Ativar som</span>
+        </button>
+      </div>
+      <figcaption class="reel-caption">Resultado real · Honda Civic na MV LEDs</figcaption>
+    </figure>
     </div>
   </section>
 
@@ -484,7 +509,7 @@
 
 <script src="js/config.js"></script>
 <script src="js/products.js"></script>
-<script src="js/main.js"></script>
+<script src="js/main.js?v=2"></script>
 <script defer src="/_vercel/insights/script.js"></script>
 </body>
 </html>
