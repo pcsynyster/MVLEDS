@@ -301,25 +301,14 @@
   function productPriceMarkup(product) {
     if (product.variants) {
       const cheapest = Math.min(...product.variants.map((v) => v.price));
-      return `
-        <div class="price">
-          <span class="price-label">A partir de</span>
-          <span class="price-value">${formatBRL(cheapest)}</span>
-        </div>`;
+      return `<p class="product-price"><span class="pp-label">A partir de</span> ${formatBRL(cheapest)}</p>`;
     }
     if (product.priceOnRequest || product.price == null) {
-      return `
-        <div class="price">
-          <span class="price-label">Valor</span>
-          <span class="price-value on-request">Sob consulta</span>
-        </div>`;
+      return `<p class="product-price product-price--consulta">Sob consulta</p>`;
     }
-    const unit = product.priceUnit ? `<span>/ ${product.priceUnit}</span>` : "";
-    return `
-      <div class="price">
-        <span class="price-label">${product.priceLabel || "Preço"}</span>
-        <span class="price-value">${formatBRL(product.price)} ${unit}</span>
-      </div>`;
+    const label = product.priceLabel ? `<span class="pp-label">${product.priceLabel}</span> ` : "";
+    const unit = product.priceUnit ? ` <span class="pp-unit">/ ${product.priceUnit}</span>` : "";
+    return `<p class="product-price">${label}${formatBRL(product.price)}${unit}</p>`;
   }
 
   const MAX_POWER = Math.max(...PRODUCTS.map((p) => p.power || 0));
@@ -336,9 +325,7 @@
 
   function highlightsMarkup(product) {
     if (!product.highlights?.length) return "";
-    return `<ul class="product-chips">${product.highlights
-      .map((h) => `<li>${h}</li>`)
-      .join("")}</ul>`;
+    return `<p class="product-specs">${product.highlights.join(" · ")}</p>`;
   }
 
   function powerCompareMarkup(product) {
@@ -365,37 +352,35 @@
   }
 
   function productCardMarkup(product) {
+    const eyebrow = product.badge
+      ? `<span class="product-eyebrow product-eyebrow--${product.badge.tone || "red"}">${product.badge.text}</span>`
+      : `<span class="product-eyebrow">${categoryLabel(product)}</span>`;
+    const action = product.variants
+      ? `<button type="button" class="choose-btn" data-choose="${product.id}" aria-label="Escolher opção de ${product.name}">
+          <span class="choose-text">Escolher</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>
+        </button>`
+      : `<button type="button" class="add-btn" data-quick-add="${product.id}" aria-label="Adicionar ${product.name} ao carrinho">
+          ${ICONS.plus}${ICONS.check}<span class="spinner" aria-hidden="true"></span>
+        </button>`;
     return `
       <div class="product-media">
-        <span class="product-tag">${categoryLabel(product)}</span>
-        ${product.badge ? `<span class="product-badge product-badge--${product.badge.tone || "red"}">${product.badge.text}</span>` : ""}
         <img src="${product.image}" alt="${product.name}" loading="lazy" />
-        <span class="card-glow" aria-hidden="true"></span>
       </div>
       <div class="product-body">
+        ${eyebrow}
         <h3 class="product-name">
           <button type="button" class="card-open" data-id="${product.id}" aria-haspopup="dialog">${product.name}</button>
         </h3>
         <p class="product-desc">${product.shortDesc}</p>
         ${highlightsMarkup(product)}
         ${powerMarkup(product)}
-      </div>
-      <div class="product-body product-body--footer">
         <div class="product-footer">
           <div class="price-block">
             ${productPriceMarkup(product)}
             ${product.priceNote ? `<span class="price-note">${product.priceNote}</span>` : ""}
           </div>
-          ${
-            product.variants
-              ? `<button type="button" class="choose-btn" data-choose="${product.id}" aria-label="Escolher opção de ${product.name}">
-                  <span class="choose-text">Escolher</span>
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>
-                </button>`
-              : `<button type="button" class="add-btn" data-quick-add="${product.id}" aria-label="Adicionar ${product.name} ao carrinho">
-                  ${ICONS.plus}${ICONS.check}<span class="spinner" aria-hidden="true"></span>
-                </button>`
-          }
+          ${action}
         </div>
       </div>`;
   }
@@ -461,23 +446,6 @@
       if (openBtn) openModal(openBtn.dataset.id);
     });
 
-    if (!finePointer.matches) return;
-
-    /* Glare de farol que acompanha o cursor (só transform, via rAF) */
-    let frame = 0;
-    let pending = null;
-    els.grid.addEventListener("pointermove", (e) => {
-      const media = e.target.closest(".product-card")?.querySelector(".product-media");
-      if (!media) return;
-      const rect = media.getBoundingClientRect();
-      pending = { media, x: e.clientX - rect.left, y: e.clientY - rect.top };
-      if (frame) return;
-      frame = requestAnimationFrame(() => {
-        pending.media.style.setProperty("--gx", `${pending.x}px`);
-        pending.media.style.setProperty("--gy", `${pending.y}px`);
-        frame = 0;
-      });
-    });
   }
 
   /* Camadas (modal / drawer): foco, scroll e teclado */
@@ -1225,92 +1193,84 @@
   }
 
   /* FAQ com abertura suave (um item aberto por vez) */
-  /* Reel da loja no hero: toca mudo, som sob demanda, pausa fora da tela */
-  function initHeroReel() {
-    const wrap = $("heroReel");
-    const video = $("reelVideo");
-    const soundBtn = $("reelSound");
-    if (!wrap || !video || !soundBtn) return;
+  /* Vitrine de vídeos no hero: toca mudo, som sob demanda, pausa fora da tela */
+  function initVitrine() {
+    const wrap = $("vitrine");
+    const video = $("vitrineVideo");
+    const somBtn = $("vitrineSom");
+    if (!wrap || !video || !somBtn) return;
 
-    const label = soundBtn.querySelector(".reel-sound-label");
-    const bar = $("reelProgress");
+    const texto = somBtn.querySelector(".vitrine-som-texto");
+    const mobile = window.matchMedia("(max-width: 760px)").matches;
     const saveData = navigator.connection && navigator.connection.saveData;
-    let userPaused = reduceMotion() || saveData;
-    let inView = false;
-    let frame = 0;
+    let pausadoPeloUsuario = reduceMotion() || saveData;
+    let naTela = false;
 
-    function setPaused(paused) {
-      wrap.classList.toggle("is-paused", paused);
+    if (mobile) {
+      video.poster = video.dataset.posterMobile;
+      video.querySelector("source").src = video.dataset.srcMobile;
+      video.load();
     }
 
-    function tick() {
-      if (video.duration) bar.style.transform = `scaleX(${(video.currentTime / video.duration).toFixed(4)})`;
-      frame = video.paused ? 0 : requestAnimationFrame(tick);
+    const marcarPausa = (pausado) => wrap.classList.toggle("is-paused", pausado);
+
+    function tocar() {
+      if (video.preload === "none") video.preload = "auto";
+      const tentativa = video.play();
+      if (tentativa && tentativa.catch) tentativa.catch(() => marcarPausa(true));
     }
 
-    function play() {
-      const attempt = video.play();
-      if (attempt && attempt.catch) attempt.catch(() => setPaused(true));
+    video.addEventListener("play", () => marcarPausa(false));
+    video.addEventListener("pause", () => marcarPausa(true));
+
+    function ligarSom(ligar) {
+      video.muted = !ligar;
+      somBtn.setAttribute("aria-pressed", String(ligar));
+      texto.textContent = ligar ? "Som ligado" : "Ativar som";
+      if (!ligar) return;
+      video.volume = 0;
+      const inicio = performance.now();
+      const subir = (agora) => {
+        const t = Math.min(Math.max((agora - inicio) / 600, 0), 1);
+        video.volume = t;
+        if (t < 1 && !video.muted) requestAnimationFrame(subir);
+      };
+      requestAnimationFrame(subir);
+      pausadoPeloUsuario = false;
+      tocar();
     }
 
-    video.addEventListener("play", () => {
-      setPaused(false);
-      if (!frame) frame = requestAnimationFrame(tick);
-    });
-    video.addEventListener("pause", () => setPaused(true));
+    somBtn.addEventListener("click", () => ligarSom(video.muted));
 
-    function setSound(on) {
-      video.muted = !on;
-      soundBtn.setAttribute("aria-pressed", String(on));
-      label.textContent = on ? "Som ligado" : "Ativar som";
-      if (on) {
-        video.volume = 0;
-        const start = performance.now();
-        const fade = (now) => {
-          const t = Math.min(Math.max((now - start) / 500, 0), 1);
-          video.volume = t;
-          if (t < 1 && !video.muted) requestAnimationFrame(fade);
-        };
-        requestAnimationFrame(fade);
-        userPaused = false;
-        play();
-      }
-    }
-
-    soundBtn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      setSound(video.muted);
-    });
-
-    wrap.querySelector(".reel-frame").addEventListener("click", () => {
+    wrap.querySelector(".vitrine-palco").addEventListener("click", () => {
       if (video.paused) {
-        userPaused = false;
-        play();
+        pausadoPeloUsuario = false;
+        tocar();
       } else {
-        userPaused = true;
+        pausadoPeloUsuario = true;
         video.pause();
       }
     });
 
     if ("IntersectionObserver" in window) {
       new IntersectionObserver(
-        (entries) => {
-          inView = entries[0].isIntersecting;
-          if (inView && !userPaused) play();
-          else if (!inView) video.pause();
+        (entradas) => {
+          naTela = entradas[0].isIntersecting;
+          if (naTela && !pausadoPeloUsuario) tocar();
+          else if (!naTela) video.pause();
         },
-        { threshold: 0.35 }
+        { threshold: 0.25 }
       ).observe(wrap);
-    } else if (!userPaused) {
-      play();
+    } else if (!pausadoPeloUsuario) {
+      tocar();
     }
 
     document.addEventListener("visibilitychange", () => {
       if (document.hidden) video.pause();
-      else if (inView && !userPaused) play();
+      else if (naTela && !pausadoPeloUsuario) tocar();
     });
 
-    setPaused(userPaused);
+    marcarPausa(pausadoPeloUsuario);
   }
 
   function initFaq() {
@@ -1373,7 +1333,7 @@
     initKelvin();
     initTilt();
     initFaq();
-    initHeroReel();
+    initVitrine();
     reveal.init();
   }
 
