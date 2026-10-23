@@ -3578,3 +3578,30 @@ section {
     background: linear-gradient(rgba(19, 19, 22, 0), var(--panel) 28%);
   }
 }
+
+/* Esqueleto enquanto o catálogo online carrega */
+.product-card--skeleton {
+  pointer-events: none;
+}
+
+.product-card--skeleton .product-media,
+.product-card--skeleton .product-body span {
+  background: linear-gradient(100deg, #17171a 30%, #222226 50%, #17171a 70%);
+  background-size: 300% 100%;
+  animation: esqueleto 1.4s ease-in-out infinite;
+}
+
+.product-card--skeleton .product-body span {
+  display: block;
+  height: 12px;
+  border-radius: 6px;
+}
+
+.product-card--skeleton .product-body span:nth-child(1) { width: 40%; }
+.product-card--skeleton .product-body span:nth-child(2) { width: 80%; height: 18px; }
+.product-card--skeleton .product-body span:nth-child(3) { width: 60%; }
+
+@keyframes esqueleto {
+  from { background-position: 100% 0; }
+  to { background-position: 0 0; }
+}

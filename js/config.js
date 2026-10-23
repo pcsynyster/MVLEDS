@@ -24,4 +24,9 @@ const CONFIG = {
     threshold: 300,
     reward: "instalação grátis na loja",
   },
+
+  // Catálogo online (Supabase > Project Settings > API).
+  // Enquanto estiver vazio, o site usa a lista de js/products.js.
+  SUPABASE_URL: "",
+  SUPABASE_ANON_KEY: "",
 };

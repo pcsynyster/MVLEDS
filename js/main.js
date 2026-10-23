@@ -311,12 +311,12 @@
     return `<p class="product-price">${label}${formatBRL(product.price)}${unit}</p>`;
   }
 
-  const MAX_POWER = Math.max(...PRODUCTS.map((p) => p.power || 0));
+  const maxPower = () => Math.max(1, ...PRODUCTS.map((p) => p.power || 0));
 
   function powerMarkup(product) {
     if (!product.power) return "";
     return `
-      <div class="power" style="--power:${(product.power / MAX_POWER).toFixed(3)}">
+      <div class="power" style="--power:${(product.power / maxPower()).toFixed(3)}">
         <span class="power-label">Potência</span>
         <span class="power-track" aria-hidden="true"><i></i></span>
         <span class="power-value">${product.power} mil lm</span>
@@ -341,7 +341,7 @@
               p.id === product.id ? 'aria-current="true"' : ""
             }>
             <span class="power-row-name">${p.power} mil lm</span>
-            <span class="power-track" style="--power:${(p.power / MAX_POWER).toFixed(3)}" aria-hidden="true"><i></i></span>
+            <span class="power-track" style="--power:${(p.power / maxPower()).toFixed(3)}" aria-hidden="true"><i></i></span>
             <span class="power-row-price">${
               p.variants ? formatBRL(Math.min(...p.variants.map((v) => v.price))) : "Consulta"
             }</span>
@@ -385,7 +385,16 @@
       </div>`;
   }
 
+  function renderGridSkeleton() {
+    els.grid.innerHTML = Array.from(
+      { length: 6 },
+      () => `<div class="product-card product-card--skeleton" aria-hidden="true"><div class="product-media"></div><div class="product-body"><span></span><span></span><span></span></div></div>`
+    ).join("");
+    els.grid.setAttribute("aria-busy", "true");
+  }
+
   function renderGrid() {
+    els.grid.removeAttribute("aria-busy");
     const list =
       state.activeCategory === "todos"
         ? PRODUCTS
@@ -1293,8 +1302,16 @@
   /* Inicialização */
   function init() {
     els.year.textContent = new Date().getFullYear();
-    renderFilters();
-    renderGrid();
+    if (CATALOGO.ativo) {
+      renderGridSkeleton();
+      CATALOGO.carregar().finally(() => {
+        renderFilters();
+        renderGrid();
+      });
+    } else {
+      renderFilters();
+      renderGrid();
+    }
     renderCart();
     updateCartCount();
 

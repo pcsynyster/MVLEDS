@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Painel de produtos — MV LEDs</title>
+<meta name="robots" content="noindex, nofollow" />
+<meta name="theme-color" content="#08090a" />
+<link rel="icon" type="image/jpeg" href="assets/images/logo-cropped.jpeg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Teko:wght@500;600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="css/admin.css?v=1" />
+</head>
+<body>
+
+<!-- Login -->
+<main class="tela tela--login" id="telaLogin" hidden>
+  <form class="login" id="formLogin" novalidate>
+    <img class="login-logo" src="assets/images/logo-cropped.jpeg" alt="MV LEDs" />
+    <h1>Painel de produtos</h1>
+    <p class="login-sub">Entre para adicionar, editar ou remover produtos do site.</p>
+
+    <label class="campo">
+      <span>E-mail</span>
+      <input type="email" id="loginEmail" autocomplete="username" required />
+    </label>
+    <label class="campo">
+      <span>Senha</span>
+      <input type="password" id="loginSenha" autocomplete="current-password" required />
+    </label>
+
+    <p class="erro" id="loginErro" role="alert"></p>
+    <button type="submit" class="btn btn--primario btn--cheio" id="loginBtn">Entrar</button>
+    <button type="button" class="link" id="esqueciBtn">Esqueci minha senha</button>
+  </form>
+
+  <form class="login" id="formNovaSenha" novalidate hidden>
+    <img class="login-logo" src="assets/images/logo-cropped.jpeg" alt="MV LEDs" />
+    <h1>Criar nova senha</h1>
+    <p class="login-sub">Escolha uma senha com pelo menos 8 caracteres.</p>
+    <label class="campo">
+      <span>Nova senha</span>
+      <input type="password" id="novaSenha" autocomplete="new-password" minlength="8" required />
+    </label>
+    <p class="erro" id="novaSenhaErro" role="alert"></p>
+    <button type="submit" class="btn btn--primario btn--cheio">Salvar nova senha</button>
+  </form>
+</main>
+
+<!-- Sem permissão -->
+<main class="tela tela--login" id="telaSemAcesso" hidden>
+  <div class="login">
+    <img class="login-logo" src="assets/images/logo-cropped.jpeg" alt="MV LEDs" />
+    <h1>Acesso não liberado</h1>
+    <p class="login-sub">Este usuário entrou, mas ainda não tem permissão de administrador. Fale com quem configurou o site.</p>
+    <button type="button" class="btn btn--secundario btn--cheio" data-sair>Sair</button>
+  </div>
+</main>
+
+<!-- Painel -->
+<div class="tela" id="telaPainel" hidden>
+  <header class="topo">
+    <div class="topo-in">
+      <img class="topo-logo" src="assets/images/logo-cropped.jpeg" alt="MV LEDs" />
+      <span class="topo-titulo">Produtos</span>
+      <nav class="topo-acoes">
+        <a class="link" href="./" target="_blank" rel="noopener">Ver site</a>
+        <button type="button" class="link" data-sair>Sair</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="painel">
+    <div class="barra">
+      <input type="search" class="busca" id="busca" placeholder="Buscar produto" aria-label="Buscar produto" />
+      <select class="filtro" id="filtroCategoria" aria-label="Filtrar por categoria"></select>
+      <button type="button" class="btn btn--primario" id="novoBtn">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
+        Novo produto
+      </button>
+    </div>
+
+    <p class="resumo" id="resumo"></p>
+    <ul class="lista" id="lista" aria-live="polite"></ul>
+  </main>
+</div>
+
+<!-- Editor -->
+<div class="folha" id="folha" hidden>
+  <form class="folha-painel" id="formProduto" novalidate>
+    <header class="folha-topo">
+      <button type="button" class="link" id="cancelarBtn">Cancelar</button>
+      <h2 id="folhaTitulo">Novo produto</h2>
+      <button type="submit" class="link link--forte" id="salvarTopoBtn">Salvar</button>
+    </header>
+
+    <div class="folha-corpo">
+      <section class="grupo">
+        <div class="foto">
+          <img class="foto-previa" id="fotoPrevia" alt="" hidden />
+          <div class="foto-vazia" id="fotoVazia">Sem foto</div>
+          <label class="btn btn--secundario foto-btn">
+            <input type="file" id="fotoInput" accept="image/*" hidden />
+            <span id="fotoBtnTexto">Escolher foto</span>
+          </label>
+        </div>
+      </section>
+
+      <section class="grupo">
+        <label class="campo">
+          <span>Nome do produto *</span>
+          <input type="text" id="fNome" maxlength="90" required />
+        </label>
+        <label class="campo">
+          <span>Categoria *</span>
+          <select id="fCategoria" required></select>
+        </label>
+        <label class="campo">
+          <span>Descrição curta <small>aparece no card</small></span>
+          <input type="text" id="fCurta" maxlength="120" />
+        </label>
+        <label class="campo">
+          <span>Descrição completa <small>aparece ao abrir o produto</small></span>
+          <textarea id="fDescricao" rows="4" maxlength="800"></textarea>
+        </label>
+      </section>
+
+      <section class="grupo">
+        <h3>Preço</h3>
+        <div class="segmento" role="radiogroup" aria-label="Tipo de preço">
+          <label><input type="radio" name="tipoPreco" value="unico" checked /><span>Preço único</span></label>
+          <label><input type="radio" name="tipoPreco" value="opcoes" /><span>Opções</span></label>
+          <label><input type="radio" name="tipoPreco" value="consulta" /><span>Sob consulta</span></label>
+        </div>
+
+        <div data-preco="unico">
+          <label class="campo">
+            <span>Preço (R$) *</span>
+            <input type="text" id="fPreco" inputmode="decimal" placeholder="0,00" />
+          </label>
+          <div class="campos-2">
+            <label class="campo">
+              <span>Texto antes do preço</span>
+              <input type="text" id="fRotulo" maxlength="30" placeholder="Ex.: A partir de" />
+            </label>
+            <label class="campo">
+              <span>Unidade</span>
+              <input type="text" id="fUnidade" maxlength="20" placeholder="Ex.: unidade, par" />
+            </label>
+          </div>
+        </div>
+
+        <div data-preco="opcoes" hidden>
+          <p class="ajuda">Use para encaixes ou unidade/par. O site mostra "A partir de" com o menor preço e o cliente escolhe a opção.</p>
+          <ul class="linhas" id="opcoes"></ul>
+          <button type="button" class="btn btn--leve" id="addOpcao">+ Adicionar opção</button>
+        </div>
+
+        <label class="campo">
+          <span>Observação abaixo do preço <small>opcional</small></span>
+          <input type="text" id="fNota" maxlength="40" placeholder="Ex.: ou R$ 280 o par" />
+        </label>
+      </section>
+
+      <section class="grupo">
+        <h3>Destaques</h3>
+        <label class="campo">
+          <span>Etiquetas curtas <small>separe por vírgula, até 3</small></span>
+          <input type="text" id="fDestaques" maxlength="90" placeholder="Ex.: 6000K, Garantia 1 ano" />
+        </label>
+        <div class="campos-2">
+          <label class="campo">
+            <span>Potência (mil lúmens) <small>só LED</small></span>
+            <input type="number" id="fPotencia" min="1" max="200" inputmode="numeric" placeholder="Ex.: 22" />
+          </label>
+          <label class="campo">
+            <span>Selo <small>opcional</small></span>
+            <input type="text" id="fSelo" maxlength="24" placeholder="Ex.: Topo de linha" />
+          </label>
+        </div>
+        <div class="segmento segmento--cores" role="radiogroup" aria-label="Cor do selo">
+          <label><input type="radio" name="corSelo" value="red" checked /><span><i class="ponto ponto--red"></i>Vermelho</span></label>
+          <label><input type="radio" name="corSelo" value="green" /><span><i class="ponto ponto--green"></i>Verde</span></label>
+          <label><input type="radio" name="corSelo" value="steel" /><span><i class="ponto ponto--steel"></i>Cinza</span></label>
+        </div>
+      </section>
+
+      <section class="grupo">
+        <h3>Especificações</h3>
+        <ul class="linhas" id="specs"></ul>
+        <button type="button" class="btn btn--leve" id="addSpec">+ Adicionar especificação</button>
+      </section>
+
+      <section class="grupo">
+        <label class="chave">
+          <span>
+            <strong>Mostrar no site</strong>
+            <small>Desligue para esconder sem apagar</small>
+          </span>
+          <input type="checkbox" id="fAtivo" checked />
+          <i aria-hidden="true"></i>
+        </label>
+      </section>
+
+      <p class="erro" id="formErro" role="alert"></p>
+      <button type="submit" class="btn btn--primario btn--cheio" id="salvarBtn">Salvar produto</button>
+      <button type="button" class="btn btn--perigo btn--cheio" id="excluirBtn" hidden>Excluir produto</button>
+    </div>
+  </form>
+</div>
+
+<!-- Confirmação -->
+<div class="dialogo" id="dialogo" hidden>
+  <div class="dialogo-caixa" role="alertdialog" aria-modal="true" aria-labelledby="dialogoTitulo">
+    <h2 id="dialogoTitulo"></h2>
+    <p id="dialogoTexto"></p>
+    <div class="dialogo-acoes">
+      <button type="button" class="btn btn--secundario" id="dialogoNao">Cancelar</button>
+      <button type="button" class="btn btn--perigo" id="dialogoSim">Excluir</button>
+    </div>
+  </div>
+</div>
+
+<div class="aviso" id="aviso" role="status" aria-live="polite"></div>
+
+<script src="js/config.js?v=2"></script>
+<script src="js/products.js?v=4"></script>
+<script src="js/vendor/supabase-2.117.2.js"></script>
+<script src="js/admin.js?v=1"></script>
+</body>
+</html>
