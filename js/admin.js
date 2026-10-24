@@ -166,12 +166,30 @@
       $("novaSenhaErro").textContent = traduzirErro(error);
       return;
     }
+    $("novaSenha").value = "";
     $("formNovaSenha").hidden = true;
     $("formLogin").hidden = false;
+    $("voltarSenhaBtn").hidden = true;
     emRecuperacao = false;
     history.replaceState(null, "", location.pathname);
     aviso("Senha atualizada.");
     await entrar(data.user);
+  });
+
+  $("trocarSenhaBtn").addEventListener("click", () => {
+    mostrar("login");
+    $("formLogin").hidden = true;
+    $("formNovaSenha").hidden = false;
+    $("voltarSenhaBtn").hidden = false;
+    $("novaSenhaErro").textContent = "";
+    $("novaSenha").focus();
+  });
+
+  $("voltarSenhaBtn").addEventListener("click", () => {
+    $("formNovaSenha").hidden = true;
+    $("formLogin").hidden = false;
+    $("voltarSenhaBtn").hidden = true;
+    mostrar("painel");
   });
 
   document.querySelectorAll("[data-sair]").forEach((botao) =>
