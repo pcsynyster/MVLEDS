@@ -27,6 +27,6 @@ const CONFIG = {
 
   // Catálogo online (Supabase > Project Settings > API).
   // Enquanto estiver vazio, o site usa a lista de js/products.js.
-  SUPABASE_URL: "",
-  SUPABASE_ANON_KEY: "",
+  SUPABASE_URL: "https://imckuxdiatyxbbibhncc.supabase.co",
+  SUPABASE_ANON_KEY: "sb_publishable_ZmGpXvye-RPkxU8fUGztuw_xZQaRNH5",
 };
